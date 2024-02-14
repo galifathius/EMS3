@@ -40,7 +40,7 @@ class ContactNumber(models.Model):
         ('alternative', 'Alternative'),
     )
     contact_type = models.CharField(max_length=50, choices=CONTACT_TYPE_CHOICES)
-    contact = models.BigIntegerField(max_length=11)
+    contact = models.BigIntegerField(blank=True, null=True)
     personal_info = models.ForeignKey(PersonalInfo, on_delete=models.CASCADE)
 
 
@@ -99,5 +99,46 @@ class References(models.Model):
     relationship = models.CharField(max_length=50)
     contact_no = models.BigIntegerField(max_length=11)
     personal_info = models.ForeignKey(PersonalInfo, on_delete=models.CASCADE)
+
+
 # Inline models over
 
+
+class Occupation(models.Model):
+    POSITION_TYPE_CHOICES = (
+        ('webdeveloper', 'Web Developer'),
+        ('graphicdesigner', 'Graphic Designer'),
+        ('seoengineer', 'SEO Engineer'),
+        ('softwaredeveloper', 'Software Developer'),
+    )
+    REPORTING_SUPERVISOR_CHOICES = (
+        ('alishoaibzaidi', 'Ali Shoaib Zaidi'),
+        ('zaynalinaqvi', 'Zayn Ali Naqvi'),
+        ('syedmujtaba', 'Syed Mujtaba'),
+        ('aijazmahdavi', 'Aijaz Mahdavi'),
+    )
+    name_of_employee = models.CharField(max_length=50, null=True)
+    position = models.CharField(max_length=50, choices=POSITION_TYPE_CHOICES)
+    core_area = models.CharField(max_length=50)
+    reporting_supervisor = models.CharField(max_length=50, choices=REPORTING_SUPERVISOR_CHOICES)
+
+
+class EmployeeSalary(models.Model):
+    name = models.CharField(max_length=50)
+    position = models.CharField(max_length=50)
+    basic_salary = models.DecimalField(max_digits=10, decimal_places=2)
+    total_salary = models.DecimalField(max_digits=10, decimal_places=2)
+
+
+class Salary(models.Model):
+    employee = models.OneToOneField(EmployeeSalary, on_delete=models.CASCADE, related_name='salary', null=True)
+    basic_salary = models.DecimalField(max_digits=10, decimal_places=2)
+    allowances = models.DecimalField(max_digits=10, decimal_places=2)
+    deductions = models.DecimalField(max_digits=10, decimal_places=2)
+
+    @property
+    def total_salary(self):
+        return self.basic_salary + self.allowances - self.deductions
+
+    def __str__(self):
+        return f"{self.employee.name}'s Salary"

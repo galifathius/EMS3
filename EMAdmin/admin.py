@@ -65,3 +65,29 @@ class PersonalInfoAdmin(admin.ModelAdmin):
                ReferencesInline
                ]
     list_display = ('first_name', 'last_name', 'gender', 'cnic', 'date_of_birth')
+
+
+@admin.register(Occupation)
+class OccupationAdmin(admin.ModelAdmin):
+    list_display = ('name_of_employee', 'position', 'core_area', 'reporting_supervisor')
+
+
+class SalaryInline(admin.TabularInline):
+    model = Salary
+    fk_name = 'employee'
+
+class EmployeeSalaryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'position', 'basic_salary', 'total_salary')
+    inlines = [SalaryInline]
+
+    def basic_salary(self, obj):
+        return obj.salary.basic_salary if obj.salary else None
+
+    def total_salary(self, obj):
+        return obj.salary.total_salary if obj.salary else None
+
+    basic_salary.short_description = 'Basic Salary'
+    total_salary.short_description = 'Total Salary'
+
+
+admin.site.register(EmployeeSalary, EmployeeSalaryAdmin)
