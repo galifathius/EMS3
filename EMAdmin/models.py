@@ -20,6 +20,7 @@ class PersonalInfo(models.Model):
     date_of_birth = models.DateField()
 
 
+
 # Inline Models
 class Address(models.Model):
     ADDRESS_TYPE_CHOICES = (
@@ -105,7 +106,7 @@ class References(models.Model):
 
 
 class Occupation(models.Model):
-    POSITION_TYPE_CHOICES = (
+    CORE_AREA_TYPE_CHOICES = (
         ('webdeveloper', 'Web Developer'),
         ('graphicdesigner', 'Graphic Designer'),
         ('seoengineer', 'SEO Engineer'),
@@ -117,28 +118,17 @@ class Occupation(models.Model):
         ('syedmujtaba', 'Syed Mujtaba'),
         ('aijazmahdavi', 'Aijaz Mahdavi'),
     )
+    POSITION_TYPE_CHOICES = (
+        ('intern', 'Intern'),
+        ('regular', 'Regular'),
+    )
     name_of_employee = models.CharField(max_length=50, null=True)
     position = models.CharField(max_length=50, choices=POSITION_TYPE_CHOICES)
-    core_area = models.CharField(max_length=50)
+    core_area = models.CharField(max_length=50, choices=CORE_AREA_TYPE_CHOICES)
     reporting_supervisor = models.CharField(max_length=50, choices=REPORTING_SUPERVISOR_CHOICES)
 
 
-class EmployeeSalary(models.Model):
-    name = models.CharField(max_length=50)
-    position = models.CharField(max_length=50)
-    basic_salary = models.DecimalField(max_digits=10, decimal_places=2)
-    total_salary = models.DecimalField(max_digits=10, decimal_places=2)
+
+#Sie shoaib code
 
 
-class Salary(models.Model):
-    employee = models.OneToOneField(EmployeeSalary, on_delete=models.CASCADE, related_name='salary', null=True)
-    basic_salary = models.DecimalField(max_digits=10, decimal_places=2)
-    allowances = models.DecimalField(max_digits=10, decimal_places=2)
-    deductions = models.DecimalField(max_digits=10, decimal_places=2)
-
-    @property
-    def total_salary(self):
-        return self.basic_salary + self.allowances - self.deductions
-
-    def __str__(self):
-        return f"{self.employee.name}'s Salary"
